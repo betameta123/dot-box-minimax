@@ -9,8 +9,8 @@ import java.util.Scanner;
 public class Game {
 
     public static void main(String[] args) {
-        Human human;
-        Bot bot;
+        Human human = new Human();
+        Bot bot = new Bot();
 
         Board board = new Board();
         int playorder = menu();
@@ -19,11 +19,27 @@ public class Game {
             human = (Human)assignPlayer(playorder);
             bot = (Bot)assignPlayer(playorder * 10);
         } catch(Exception e){
-            System.out.println("Failed to assign players");
+            new Exception("Failed to assign players");
+
         }
+
+        gameloop(human, bot);
     }
 
+    public static void gameloop(Human human, Bot bot) {
+        boolean running = true;
 
+        while(running) {
+            switch(human.getPlayerID()) {
+                case Blue:
+                    human.chooseSquare();
+                    bot.chooseSquare();
+                case Red:
+                    bot.chooseSquare();
+                    human.chooseSquare();
+            }
+        }
+    }
 
     private static int menu(){
         int player = 0;
@@ -54,7 +70,6 @@ public class Game {
             System.out.print("Would You like to go first(1) or second(2): ");
         }
 
-        keyboard.close();
         return player;
     }
 

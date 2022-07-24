@@ -1,5 +1,5 @@
 public class Board {
-    private static final short DIM = 7;
+    public static final short DIM = 7;
     private static char[][] board = new char[DIM][DIM];
 
     public Board() {
