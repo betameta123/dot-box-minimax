@@ -11,7 +11,7 @@ public class Board {
     }
 
     public static void updateBoard(int x, int y) {
-        board[x][y] = 'X';
+        board[x][y] = '_';
     }
 
     public static char[][] getBoard(){
@@ -32,6 +32,14 @@ public class Board {
             throw new Exception("Invalid Square Filled");
 
         board[x][y] = player;
+    }
+
+    public static char[][] fillSquare(char player, int x, int y, char[][] tempBoard) throws Exception{
+        if(x%2 == 0 || y%2 == 0)
+            throw new Exception("Invalid Square Filled");
+        tempBoard[x][y] = player;
+        return tempBoard;
+
     }
 
 }

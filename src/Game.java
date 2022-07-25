@@ -1,5 +1,5 @@
 // ____           __                                       __           ____                                        ______    __     ____
-   // / __ \  ____   / /_   _____         ____ _   ____   ____/ /          / __ )  ____    _  __  ___    _____         / ____/   / /    /  _/
+// / __ \  ____   / /_   _____         ____ _   ____   ____/ /          / __ )  ____    _  __  ___    _____         / ____/   / /    /  _/
   // / / / / / __ \ / __/  / ___/        / __ `/  / __ \ / __  /          / __  | / __ \  | |/_/ / _ \  / ___/        / /       / /     / /
  // / /_/ / / /_/ // /_   (__  )        / /_/ /  / / / // /_/ /          / /_/ / / /_/ / _>  <  /  __/ (__  )        / /___    / /___ _/ /
 // /_____/  \____/ \__/  /____/         \__,_/  /_/ /_/ \__,_/          /_____/  \____/ /_/|_|  \___/ /____/         \____/   /_____//___/
@@ -7,6 +7,8 @@
 import java.util.Scanner;
 
 public class Game {
+
+    private static Scanner keyboard = new Scanner(System.in);
 
     public static void main(String[] args) {
         Human human = new Human();
@@ -28,12 +30,12 @@ public class Game {
 
     public static void gameloop(Human human, Bot bot) {
         boolean running = true;
+        PlayerID turns = human.getPlayerID();
 
         while(running) {
-            switch(human.getPlayerID()) {
+            switch(turns) {
                 case Blue:
                     human.chooseSquare();
-                    bot.chooseSquare();
                 case Red:
                     bot.chooseSquare();
                     human.chooseSquare();
@@ -43,7 +45,6 @@ public class Game {
 
     private static int menu(){
         int player = 0;
-        Scanner keyboard = new Scanner(System.in);
 
         System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------------");
         System.out.println("|                                                                                                                                                         |");
@@ -85,6 +86,30 @@ public class Game {
                 return new Bot(1);
         }
         throw new Exception("Failed to assign players");
+    }
+
+    public static WinState checkWinner(char[][] board){
+        int numB = 0;
+        int numR = 0;
+        for(int i = 0; i<Board.DIM; i++){
+            for(int j = 0; j<Board.DIM; j++){
+                if(board[i][j] == PlayerID.Blue.toChar())
+                    numB++;
+                else if(board[i][j] == PlayerID.Red.toChar())
+                    numR++;
+            }
+        }
+        if(numB >= 5){
+            return WinState.Blue;
+        }
+        else if(numR >= 5){
+            return WinState.Red;
+        }
+        return WinState.NoWinner;
+    }
+
+    public static int getInput(){
+        return keyboard.nextInt();
     }
 
 }
