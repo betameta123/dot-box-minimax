@@ -1,19 +1,14 @@
-public class Bot extends Player{
-    private PlayerID playerid;
-    public Bot(int playerid){
-        super(playerid);
-        System.out.println("I am a bot and I will be " + super.getPlayerID().toChar());
-        this.playerid = super.getPlayerID();
-    }
+public class Bot extends Player {
 
-    public Bot(){
-    }
+	public Bot(boolean playerorder, Game game) {
+		super(playerorder, game);
+	}
 
     public void chooseSquare(){
         int bestScore = Integer.MIN_VALUE;
         int row = 0;
         int column = 0;
-        char[][] tempBoard = Board.getBoard();
+        char[][] tempBoard = this.game.getBoard().getGameBoard();
 
         for(int i = 0; i < Board.DIM; i++){
             for(int j = 0; j < Board.DIM; j++){
@@ -28,13 +23,17 @@ public class Bot extends Player{
                 }
             }
         }
-        Board.updateBoard(row, column);
+        this.game.getBoard().updateBoard(row, column);
         System.out.println("Bot move:");
         System.out.println("_________________________________________________\n\n");
-        Board.printBoard();
+        this.game.getBoard().printBoard();
     }
 
     public int miniMax(char[][] board, boolean maxi){
         return 1;
     }
+
+	public String toString() {
+        return "I am a Bot and I will be " + this.playerid;
+	}
 }

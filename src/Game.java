@@ -1,50 +1,66 @@
-// ____           __                                       __           ____                                        ______    __     ____
-// / __ \  ____   / /_   _____         ____ _   ____   ____/ /          / __ )  ____    _  __  ___    _____         / ____/   / /    /  _/
-  // / / / / / __ \ / __/  / ___/        / __ `/  / __ \ / __  /          / __  | / __ \  | |/_/ / _ \  / ___/        / /       / /     / /
- // / /_/ / / /_/ // /_   (__  )        / /_/ /  / / / // /_/ /          / /_/ / / /_/ / _>  <  /  __/ (__  )        / /___    / /___ _/ /
+//     ____           __                                       __           ____                                        ______    __     ____
+//    / __ \  ____   / /_   _____         ____ _   ____   ____/ /          / __ )  ____    _  __  ___    _____         / ____/   / /    /  _/
+//   / / / / / __ \ / __/  / ___/        / __ `/  / __ \ / __  /          / __  | / __ \  | |/_/ / _ \  / ___/        / /       / /     / /
+//  / /_/ / / /_/ // /_   (__  )        / /_/ /  / / / // /_/ /          / /_/ / / /_/ / _>  <  /  __/ (__  )        / /___    / /___ _/ /
 // /_____/  \____/ \__/  /____/         \__,_/  /_/ /_/ \__,_/          /_____/  \____/ /_/|_|  \___/ /____/         \____/   /_____//___/
 
 import java.util.Scanner;
 
 public class Game {
 
-    private static Scanner keyboard = new Scanner(System.in);
+	private Scanner scanner;
+	private Board board;
 
-    public static void main(String[] args) {
-        Human human = new Human();
-        Bot bot = new Bot();
+	private Human human;
+	private Bot bot;
 
-        Board board = new Board();
-        int playorder = menu();
+	enum WinState {
+		BLUE, RED, NO_WINNER;
+	}
 
-        try {
-            human = (Human)assignPlayer(playorder);
-            bot = (Bot)assignPlayer(playorder * 10);
-        } catch(Exception e){
-            new Exception("Failed to assign players");
+	public Game() {
+		this.board = new Board();
+		this.scanner = new Scanner(System.in);
+		init();
+	}
 
-        }
+	public Scanner getScanner() { return this.scanner; }
+	public Board getBoard() { return this.board; }
 
-        gameloop(human, bot);
-    }
+	private void init() {
+		boolean playerorder = menu() == 1;
+		this.human = new Human(playerorder, this);
+		this.bot = new Bot(!playerorder, this);
+	}
 
-    public static void gameloop(Human human, Bot bot) {
+	public void run() {
+		gameloop(human, bot);
+		cleanup();
+	}
+
+	private void cleanup() {
+		this.scanner.close();
+	}
+
+    public void gameloop(Human human, Bot bot) {
         boolean running = true;
-        PlayerID turns = human.getPlayerID();
+        PlayerID humanTurn = human.getPlayerID();
 
         while(running) {
-            switch(turns) {
-                case Blue:
+            switch(humanTurn) {
+                case BLUE:
                     human.chooseSquare();
-                case Red:
+                    bot.chooseSquare();
+					break;
+                case RED:
                     bot.chooseSquare();
                     human.chooseSquare();
+					break;
             }
         }
     }
 
-    private static int menu(){
-        int player = 0;
+    private int menu(){
 
         System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------------");
         System.out.println("|                                                                                                                                                         |");
@@ -55,61 +71,59 @@ public class Game {
         System.out.println("|      /_____/  \\____/ \\__/  /____/         \\__,_/  /_/ /_/ \\__,_/          /_____/  \\____/ /_/|_|  \\___/ /____/         \\____/   /_____//___/            |");
         System.out.println("|                                                                                                                                                         |");
         System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------- \n\n");
-        System.out.print("Would You like to go first(1) or second(2): ");
 
-        while(true) {
-            try{
-                player = keyboard.nextInt();
 
-                if(player != 1 && player != 2 )
-                    throw new Exception("Invalid");
+		int player = 0;
+		boolean flag = false;
+		do {
+			flag = false;
+        	System.out.print("Would You like to go first(1) or second(2): ");
+			try {
+				player = this.getNextInt();
+			} catch (Exception e) {
+				flag = true;
+			}
 
-                break;
-            } catch(Exception e) {
-                System.out.print("Would You like to go first(1) or second(2): ");
-            }
-            System.out.print("Would You like to go first(1) or second(2): ");
-        }
+			flag |= !(player == 1 || player == 2);
+            if (flag) System.out.println("Invalid Input. Try Again!");
+
+		} while (flag);
 
         return player;
     }
 
-    private static Player assignPlayer(int playorder) throws Exception{
-        switch (playorder){
-            case 1:
-                return new Human(1);
-            case 2:
-                return new Human(2);
-            case 10:
-                return new Bot(2);
-            case 20:
-                return new Bot(1);
-        }
-        throw new Exception("Failed to assign players");
-    }
-
-    public static WinState checkWinner(char[][] board){
+    public WinState checkWinner(char[][] board){
         int numB = 0;
         int numR = 0;
+
         for(int i = 0; i<Board.DIM; i++){
             for(int j = 0; j<Board.DIM; j++){
-                if(board[i][j] == PlayerID.Blue.toChar())
+                if(board[i][j] == PlayerID.BLUE.asChar())
                     numB++;
-                else if(board[i][j] == PlayerID.Red.toChar())
+                else if(board[i][j] == PlayerID.RED.asChar())
                     numR++;
             }
         }
-        if(numB >= 5){
-            return WinState.Blue;
+
+        if(numB >= 5) {
+            return WinState.BLUE;
         }
-        else if(numR >= 5){
-            return WinState.Red;
+        else if(numR >= 5) {
+            return WinState.RED;
         }
-        return WinState.NoWinner;
+        return WinState.NO_WINNER;
     }
 
-    public static int getInput(){
-        return keyboard.nextInt();
+    public int getNextInt() throws java.util.InputMismatchException {
+		int value = 0;
+		String input = "";
+
+		if (scanner.hasNext()) input = scanner.nextLine().trim();
+		return Integer.parseInt(input);
+    }
+
+    public static void main(String[] args) {
+		new Game().run();
     }
 
 }

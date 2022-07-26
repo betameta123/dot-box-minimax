@@ -1,45 +1,47 @@
 public class Board {
-    public static final short DIM = 7;
-    private static char[][] board = new char[DIM][DIM];
 
-    public Board() {
-        for(int j = 0; j < DIM; j++) {
-                for(int i = 0; i < DIM; i++) {
-                board[i][j] = i%2 == 0 && j%2 == 0 ? '.' : ' ';
-            }
-        }
-    }
+	public static final short DIM = 7;
 
-    public static void updateBoard(int x, int y) {
-        board[x][y] = '_';
-    }
+	private char[][] gameBoard;
 
-    public static char[][] getBoard(){
-        return board;
-    }
+	public Board() {
+		this.gameBoard= new char[DIM][DIM];
 
-    public static void printBoard() {
-        for(int j = 0; j < DIM; j++) {
-                for(int i = 0; i < DIM; i++) {
-                    System.out.print(board[i][j]);
-            }
-            System.out.print("\n");
-        }
-    }
+		for(int j = 0; j < DIM; j++) {
+			for(int i = 0; i < DIM; i++) {
+				gameBoard[i][j] = i%2 == 0 && j%2 == 0 ? '.' : ' ';
+			}
+		}
+	}
 
-    public static void fillSquare(char player, int x, int y) throws Exception{
-        if(x%2 == 0 || y%2 == 0)
-            throw new Exception("Invalid Square Filled");
+	public char[][] getGameBoard() { return this.gameBoard; }
 
-        board[x][y] = player;
-    }
+	public void updateBoard(int x, int y) {
+		gameBoard[x][y] = '_';
+	}
 
-    public static char[][] fillSquare(char player, int x, int y, char[][] tempBoard) throws Exception{
-        if(x%2 == 0 || y%2 == 0)
-            throw new Exception("Invalid Square Filled");
-        tempBoard[x][y] = player;
-        return tempBoard;
+	public void printBoard() {
+		for(int j = 0; j < DIM; j++) {
+			for(int i = 0; i < DIM; i++) {
+				System.out.print(gameBoard[i][j]);
+			}
+			System.out.print("\n");
+		}
+	}
 
-    }
+	public void fillSquare(char player, int x, int y) throws Exception {
+		if(x%2 == 0 || y%2 == 0)
+			throw new Exception("Invalid Square Filled");
+
+		gameBoard[x][y] = player;
+	}
+
+	public char[][] fillSquare(char player, int x, int y, char[][] tempBoard) throws Exception {
+		if(x%2 == 0 || y%2 == 0)
+			throw new Exception("Invalid Square Filled");
+		tempBoard[x][y] = player;
+		return tempBoard;
+
+	}
 
 }
