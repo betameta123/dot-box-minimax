@@ -18,18 +18,4 @@ public class Player {
         return playerid;
     }
 
-	//TODO: bruh
-    public boolean isValidSquare(int x, int y) {
-
-        if(x%2 == 1 || y%2 == 1) {
-            if(x%2 ==1 && y%2 ==1)
-                return false;
-
-            if(game.getBoard().getGameBoard()[x][y] == ' ')
-                return true;
-        }
-
-        return false;
-    }
-
 }

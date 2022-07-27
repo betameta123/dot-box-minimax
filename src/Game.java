@@ -45,19 +45,34 @@ public class Game {
     public void gameloop(Human human, Bot bot) {
         boolean running = true;
         PlayerID humanTurn = human.getPlayerID();
-
         while(running) {
+            round(humanTurn);
+        }
+    }
+
+    public void round(PlayerID humanTurn) {
+        boolean endturn = true;
             switch(humanTurn) {
                 case BLUE:
-                    human.chooseSquare();
-                    bot.chooseSquare();
+                    do {
+                        endturn = human.turn();
+                    } while(!endturn);
+
+                    do {
+                        endturn = bot.turn();
+                    } while(!endturn);
+
 					break;
                 case RED:
-                    bot.chooseSquare();
-                    human.chooseSquare();
+                    do {
+                        endturn = bot.turn();
+                    } while(!endturn);
+
+                    do{
+                        endturn = human.turn();
+                    }while(!endturn);
 					break;
             }
-        }
     }
 
     private int menu(){
@@ -90,6 +105,18 @@ public class Game {
 		} while (flag);
 
         return player;
+    }
+
+    public boolean isValidSquare(int row, int column) {
+
+        if(row < 0 || row > Board.DIM || column < 0 || column > Board.DIM)
+            return false;
+        if (row % 2 == 1 && column % 2 == 1)
+            return false;
+        if(!(board.getGameBoard()[row][column] == ' '))
+            return false;
+
+        return true;
     }
 
     public WinState checkWinner(char[][] board){
