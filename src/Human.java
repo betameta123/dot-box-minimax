@@ -1,18 +1,27 @@
 import java.util.Scanner;
 
 public class Human extends Player {
+    private Board board;
 
 	public Human(boolean playerorder, Game game) {
 		super(playerorder, game);
+        board = game.getBoard();
 	}
 
     public boolean turn() {
-        chooseSquare();
+        int[] cord = chooseSquare();
+        PlayerID playerid = super.makeMove(this.playerid, cord[0], cord[1]);
 
+        if(board.fillSquare(this.playerid, cord[0], cord[1])) {
+            board.printBoard();
+            return false;
+        }
+
+        board.printBoard();
         return true;
     }
 
-	private void chooseSquare() {
+	private int[] chooseSquare() {
 		int row = -1;
 		int column = -1;
         boolean validInput = true;
@@ -45,6 +54,9 @@ public class Human extends Player {
             }
 
         } while(!validInput);
+
+        int[] cord = {row, column};
+        return cord;
     }
 
 
