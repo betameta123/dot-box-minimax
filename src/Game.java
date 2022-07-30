@@ -15,7 +15,7 @@ public class Game {
 	private Bot bot;
 
 	enum WinState {
-		BLUE, RED, NO_WINNER;
+		BLUE, RED;
 	}
 
 	public Game() {
@@ -45,8 +45,21 @@ public class Game {
     public void gameloop(Human human, Bot bot) {
         boolean running = true;
         PlayerID humanTurn = human.getPlayerID();
-        while(running) {
+        do {
             round(humanTurn);
+
+            if(isOver()) {
+                running = false;
+            }
+        } while(running);
+
+        switch (getWinner()) {
+            case BLUE:
+                System.out.println("Blue Player Wins!!");
+                break;
+            case RED:
+                System.out.println("Red Player Wins!!");
+                break;
         }
     }
 
@@ -54,23 +67,34 @@ public class Game {
         boolean endturn = true;
             switch(humanTurn) {
                 case BLUE:
-                    do {
+                    while(!endturn) {
                         endturn = human.turn();
-                    } while(!endturn);
+                        if(isOver())
+                            endturn = true;
 
-                    do {
+                    }
+
+                    while(!endturn) {
                         endturn = bot.turn();
-                    } while(!endturn);
+                        if(isOver())
+                            endturn = true;
+
+                    }
 
 					break;
                 case RED:
-                    do {
+                    while(!endturn) {
                         endturn = bot.turn();
-                    } while(!endturn);
+                        if(isOver())
+                            endturn = true;
 
-                    do{
+                    }
+
+                    while(!endturn) {
                         endturn = human.turn();
-                    }while(!endturn);
+                        if(isOver())
+                            endturn = true;
+                    }
 					break;
             }
     }
@@ -109,7 +133,7 @@ public class Game {
 
     public boolean isValidSquare(int row, int column) {
 
-        if(row < 0 || row > Board.DIM || column < 0 || column > Board.DIM)
+        if(row < 0 || row >= Board.DIM || column < 0 || column >= Board.DIM)
             return false;
         if (row % 2 == 1 && column % 2 == 1)
             return false;
@@ -119,15 +143,15 @@ public class Game {
         return true;
     }
 
-    public WinState checkWinner(char[][] board){
+    public WinState getWinner() {
         int numB = 0;
         int numR = 0;
 
         for(int i = 0; i<Board.DIM; i++){
             for(int j = 0; j<Board.DIM; j++){
-                if(board[i][j] == PlayerID.BLUE.asChar())
+                if(board.getGameBoard()[i][j] == PlayerID.BLUE.asChar())
                     numB++;
-                else if(board[i][j] == PlayerID.RED.asChar())
+                else if(board.getGameBoard()[i][j] == PlayerID.RED.asChar())
                     numR++;
             }
         }
@@ -135,11 +159,19 @@ public class Game {
         if(numB >= 5) {
             return WinState.BLUE;
         }
-        else if(numR >= 5) {
-            return WinState.RED;
-        }
-        return WinState.NO_WINNER;
+        return WinState.RED;
     }
+
+    private boolean isOver() {
+        for(char[] i: board.getGameBoard()){
+            for(char j: i){
+                if(j == ' ')
+                    return false;
+            }
+        }
+        return true;
+    }
+
 
     public int getNextInt() throws java.util.InputMismatchException {
 		int value = 0;
