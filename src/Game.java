@@ -48,12 +48,13 @@ public class Game {
         do {
             round(humanTurn);
 
-            if(isOver()) {
+            if(isOver(this.board)) {
                 running = false;
             }
+
         } while(running);
 
-        switch (getWinner()) {
+        switch (getWinner(this.board)) {
             case BLUE:
                 System.out.println("Blue Player Wins!!");
                 break;
@@ -64,35 +65,43 @@ public class Game {
     }
 
     public void round(PlayerID humanTurn) {
-        boolean endturn = true;
+        boolean endturn = false;
             switch(humanTurn) {
                 case BLUE:
+
                     while(!endturn) {
                         endturn = human.turn();
-                        if(isOver())
+                        if(isOver(this.board)) {
                             endturn = true;
-
+                            System.out.println("Game Over");
+                        }
                     }
+
+                    endturn = false;
+                    if(isOver(this.board))
+                        endturn = true;
 
                     while(!endturn) {
                         endturn = bot.turn();
-                        if(isOver())
+                        if(isOver(this.board))
                             endturn = true;
-
                     }
 
 					break;
                 case RED:
                     while(!endturn) {
                         endturn = bot.turn();
-                        if(isOver())
+                        if(isOver(this.board))
                             endturn = true;
 
                     }
+                    endturn = false;
+                    if(isOver(this.board))
+                        endturn = true;
 
                     while(!endturn) {
                         endturn = human.turn();
-                        if(isOver())
+                        if(isOver(this.board))
                             endturn = true;
                     }
 					break;
@@ -131,7 +140,7 @@ public class Game {
         return player;
     }
 
-    public boolean isValidSquare(int row, int column) {
+    public boolean isValidSquare(Board board, int row, int column) {
 
         if(row < 0 || row >= Board.DIM || column < 0 || column >= Board.DIM)
             return false;
@@ -143,7 +152,7 @@ public class Game {
         return true;
     }
 
-    public WinState getWinner() {
+    public WinState getWinner(Board board) {
         int numB = 0;
         int numR = 0;
 
@@ -162,7 +171,7 @@ public class Game {
         return WinState.RED;
     }
 
-    private boolean isOver() {
+    public boolean isOver(Board board) {
         for(char[] i: board.getGameBoard()){
             for(char j: i){
                 if(j == ' ')

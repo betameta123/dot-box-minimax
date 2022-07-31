@@ -1,4 +1,4 @@
-public class Board {
+public class Board implements Cloneable{
 
 	public static final short DIM = 7;
 
@@ -13,6 +13,18 @@ public class Board {
 			}
 		}
 	}
+    public Board(Board board) {
+		this.gameBoard= new char[DIM][DIM];
+        fillNewBoard(board);
+    }
+
+    private void fillNewBoard(Board board) {
+        for(int i = 0; i < DIM; i++) {
+            for(int j = 0; j < DIM; j++) {
+                this.gameBoard[i][j] = board.getGameBoard()[i][j];
+            }
+        }
+    }
 
 	public char[][] getGameBoard() { return this.gameBoard; }
 

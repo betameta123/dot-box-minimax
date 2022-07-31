@@ -10,7 +10,7 @@ public class Human extends Player {
 
     public boolean turn() {
         int[] cord = chooseSquare();
-        PlayerID playerid = super.makeMove(this.playerid, cord[0], cord[1]);
+        super.makeMove(this.playerid, cord[0], cord[1]);
 
         if(board.fillSquare(this.playerid, cord[0], cord[1])) {
             board.printBoard();
@@ -48,7 +48,7 @@ public class Human extends Player {
 
             } while(!validInput);
 
-            validInput = game.isValidSquare(row, column);
+            validInput = game.isValidSquare(board, row, column);
             if(!validInput){
                 System.out.println("Your input was invalid. Please try again.");
             }
